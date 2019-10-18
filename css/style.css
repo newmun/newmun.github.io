@@ -45,6 +45,44 @@ h6 {
   padding: 0;
 }
 
+.intro-info .btn-get-started,
+.intro-info .btn-services {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 50px;
+  transition: 0.5s;
+
+  margin: 0 20px 20px 0;
+  color: #fff;
+}
+
+.intro-info .btn-get-started {
+  background: #007bff;
+  border: 2px solid #007bff;
+  color: #fff;
+}
+.intro-info .btn-get-started:hover {
+  background: none;
+  border-color: #000;
+  color: #000;
+}
+
+
+.sochum {
+  background-image: url('https://nhsmun.nyc/sites/default/files/styles/large/public/SOCHUM.png');
+ background-size:cover;
+ background-repeat:no-repeat;
+ width:64px;
+ height:64px;
+  /* background: url(https://nhsmun.nyc/sites/default/files/styles/large/public/SOCHUM.png) 50% 50% no-repeat; /* 50% 50% centers image in div width: 64px;
+  height: 64px;
+  object-fit: cover;*/
+}
+
 /* Back to top button */
 .container-fluidd {
     margin-left: auto;
@@ -216,6 +254,7 @@ $duration: 30s;
 
 body { padding-bottom: 5rem; }
 h1,h2,p {padding: 0 5%;}
+#services p{padding: 5px 0;}
 
 
 /*  */
@@ -811,10 +850,12 @@ h1,h2,p {padding: 0 5%;}
 /* Services Section
 --------------------------------*/
 
+
 #services {
   padding: 60px 0 40px 0;
   box-shadow: inset 0px 0px 12px 0px rgba(0, 0, 0, 0.1);
 }
+
 
 #services .box {
   padding: 30px;
@@ -865,6 +906,36 @@ h1,h2,p {padding: 0 5%;}
   line-height: 24px;
   margin-bottom: 0;
 }
+
+#services .intro-info .btn-get-sstarted,
+.intro-info .btn-services {
+
+  line-height: 24px;
+  margin-bottom: 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 50px;
+  transition: 0.5s;
+
+  margin: 0 20px 20px 0;
+  color: #fff;
+}
+
+#services .intro-info .btn-get-sstarted {
+  background: #007bff;
+  border: 2px solid #007bff;
+  color: #fff;
+}
+#services .intro-info .btn-get-sstarted:hover {
+  background: none;
+  border-color: #000;
+  color: #000;
+}
+
 
 #why-us {
   padding: 60px 0;
