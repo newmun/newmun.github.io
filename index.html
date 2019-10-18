@@ -26,7 +26,27 @@
 
   <!-- Main Stylesheet File -->
   <link href="css/style.css" rel="stylesheet">
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 
+  <script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/init.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-database.js"></script>
+
+  <script type="text/javascript">
+      var config = {
+        apiKey: "AIzaSyAP6ZgvRsErDr3prF8InGq0c-qr5Y4RQYc",
+        authDomain: "newmunlive.firebaseapp.com",
+        databaseURL: "https://newmunlive.firebaseio.com",
+        projectId: "newmunlive",
+        storageBucket: "",
+        messagingSenderId: "674061236225",
+        appId: "1:674061236225:web:c0d7c445791bdccf67e800"
+
+      };
+
+      firebase.initializeApp(config);
+  </script>
 
 </head>
 
@@ -97,12 +117,15 @@
       <div class="intro-info">
         <h2>Explore<br><span>NEWMUN</span><br>and discover new platforms</h2>
         <div>
-          <a href="#about" class="btn-get-started scrollto">Get Started</a>
-	  <a href="#services" class="btn-services scrollto">Our Councils</a>
+            <a href="#about" class="btn-get-started scrollto">Get Started</a>
+
+	          <a href="https://mega.nz/#!yHhH2I6b!KUkRvaw11WW9oyaU4OF_4ydCYJX0pDnzcdNryX0s0nQ" class="btn-services scrollto">Download NewMUN Logos for Position Papers</a>
+            <a href="#services" class="btn-services scrollto">Our Councils</a>
         </div>
       </div>
 
     </div>
+
   </section><!-- #intro -->
 
   <main id="main">
@@ -137,11 +160,35 @@
 
       </div>
     </section>
+
     <!--==========================
       About Us Section
     ============================-->
+
+
+    <!--marquee style="font-family: trebuchet" ONMOUSEOVER="this.stop()" ONMOUSEOUT="this.start()" BEHAVIOR="scroll">Here is marquee text</marquee-->
+    <script type="text/javascript">
+    var ref = firebase.database().ref("/news/");
+    ref.once("value")
+      .then(function(snapshot) {
+        var desc = snapshot.child("desc").val();
+
+        document.getElementById('newsmrq').textContent = desc.toString();
+        //document.getElementById('suid').textContent = "Unique ID : "+ uidDat.toString();
+        //document.getElementById('scou').textContent = "Council : <b>"+ councilDat.toString() + "</b>";
+      });
+    </script>
+    <!--p id="newsmrq" class="marquee">This is marquee</p-->
+
+    <!--div class="button text-center" id="button-7">
+    <div id="dub-arrow"><img src="https://github.com/atloomer/atloomer.github.io/blob/master/img/iconmonstr-arrow-48-240.png?raw=true" alt="" /></div>
+    <a href="#">DOWNLOAD NOW</a>
+  </div-->
+
+
     <section id="about">
       <div class="container">
+
 
         <header class="section-header">
           <h3>What is NewMUN</h3>

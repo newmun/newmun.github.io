@@ -63,19 +63,19 @@ limitations under the License.
         // [START signout]
         firebase.auth().signOut();
         // document.getElementById("grade").style.display = "block";
-        //document.getElementById("sec").style.display = "block";
-        //document.getElementById("password").style.display = "block";
-
+        // document.getElementById("sec").style.display = "block";
+        // document.getElementById("password").style.display = "block";
+        // document.getElementById("quickstart-sign-up").style.display = "block";
         // document.getElementById("verify-email").style.display = "block";
-        //document.getElementById("email").style.display = "block";
-        //document.getElementById("username0").style.display = "block";
+        // document.getElementById("email").style.display = "block";
+        // document.getElementById("username0").style.display = "block";
 
         // [END signout]
       } else {
         // document.getElementById("grade").style.display = "none";
         // document.getElementById("sec").style.display = "none";
         // document.getElementById("password").style.display = "none";
-        // 
+        // document.getElementById("quickstart-sign-up").style.display = "none";
         // document.getElementById("verify-email").style.display = "none";
         // document.getElementById("email").style.display = "none";
         // document.getElementById("username0").style.display = "none";
@@ -93,7 +93,17 @@ limitations under the License.
         }
         // Sign in with email and pass.
         // [START authwithemail]
-        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(function(response){
+          firebase.database().ref('news').set({
+            adddesc: document.getElementById('newsItem').value,
+            desc: "by " + document.getElementById('byItem').value,
+            title: document.getElementById('titleItem').value,
+            uid: firebase.auth().currentUser.uid,
+          });
+          document.getElementById('ss-msg').textContent = "Sign Up Completed Succesfully";
+        })
+        .catch(function(error) {
           // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
@@ -121,28 +131,9 @@ limitations under the License.
       var sixthseventh = ["SOCHUM", "WHO", "UNEP"]
       var email = document.getElementById('email').value;
       var password = document.getElementById('password').value;
-      var usrname =  document.getElementById('username0').value;
-      var cncil = document.getElementById('council0').value;
-      var grade = document.getElementById('grade').value;
-      var secdat = document.getElementById('sec').value;
 
-      if (grade > 12 || grade < 6){
-        alert("You provided a grade that is out of range. Please give between 6 - 12");
-        return;
-      }
-      if (grade == 6 || grade == 7){
-        if (!sixthseventh.includes(cncil)){
-          alert("Sorry, the councils chosen is reserved for Grade 8 to Grade 12");
-          return;
-        }
 
-      }
-      if (grade>= 8){
-        if (sixthseventh.includes(cncil)){
-          alert("Sorry, the councils chosen is reserved for Grade 6 and Grade 7");
-          return;
-        }
-      }
+
       if (email.length < 4) {
         alert('Please enter an email address.');
         return;
@@ -158,15 +149,7 @@ limitations under the License.
         console.log(firebase.auth().currentUser.uid)
 
 
-        firebase.database().ref('users/' + firebase.auth().currentUser.uid).set({
-          uid: firebase.auth().currentUser.uid,
-          fullname: usrname.toString(),
-          council: cncil.toString(),
-          email: email,
-          grade: grade,
-          section: secdat,
-        });
-        document.getElementById('ss-msg').textContent = "Sign Up Completed Succesfully";
+
 
       })
       .catch(function(error) {
@@ -243,53 +226,38 @@ limitations under the License.
       // [START authstatelistener]
       firebase.auth().onAuthStateChanged(function(user) {
         // [START_EXCLUDE silent]
-        document.getElementById('quickstart-verify-email').disabled = true;
+
         // [END_EXCLUDE]
         if (user) {
           // User is signed in.
           var displayName = user.fullname;
           var email = user.email;
           var emailVerified = user.emailVerified;
-          var photoURL = user.photoURL;
+
           var isAnonymous = user.isAnonymous;
           var uid = user.uid;
-          var providerData = user.providerData;
+
 
           // var rootRef = firebase.database().ref();
 
-          var userz = "";
-
-          var ref = firebase.database().ref("/users/"+ uid.toString());
-          ref.once("value")
-            .then(function(snapshot) {
-              var firstName = snapshot.child("fullname").val();
-              var uidDat = snapshot.child("uid").val();
-              var councilDat = snapshot.child("council").val();
-              var sectionDat = snapshot.child("section").val();
-              var gradeDat = snapshot.child("grade").val();
-              document.getElementById('welc').textContent = "Welcome "+ firstName.toString();
-              document.getElementById('suid').textContent = "Unique ID : "+ uidDat.toString();
-              document.getElementById('scou').textContent = "Council : <b>"+ councilDat.toString() + "</b>";
-            });
+          // var userz = "";
+          //
+          // var ref = firebase.database().ref("/news/"+ uid.toString());
+          // ref.once("value")
+          //   .then(function(snapshot) {
+          //     var titledat = snapshot.child("title").val();
+          //     var adddat = snapshot.child("addesc").val();
+          //     var descdat = snapshot.child("desc").val();
+          //
+          //     document.getElementById('welc').textContent = titledat.toString();
+          //     document.getElementById('suid').textContent = "<b>"+ adddat.toString() + "</b>";
+          //     document.getElementById('scou').textContent = descdat.toString();
+          //   });
           // var ref = firebase.database().ref('/users/' + uid +"/fullname");
           // document.getElementById('welc').textContent = "Welcome "+userz;
 
-          document.getElementById('suse').textContent = '';
-          // [START_EXCLUDE]
-          // document.getElementById("grade").style.display = "none";
-          // document.getElementById("sec").style.display = "none";
-          // document.getElementById("password").style.display = "none";
-          //
-          // document.getElementById("verify-email").style.display = "none";
-          // document.getElementById("email").style.display = "none";
-          // document.getElementById("username0").style.display = "none";
 
-          document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
-          document.getElementById('quickstart-sign-in').textContent = 'Sign out';
-          document.getElementById('quickstart-account-details').textContent ="Your unique identification code: "+uid;
-          if (!emailVerified) {
-            document.getElementById('quickstart-verify-email').disabled = false;
-          }
+
 
           // [END_EXCLUDE]
         } else {
@@ -307,9 +275,8 @@ limitations under the License.
       // [END authstatelistener]
 
       document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
-      document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUp, false);
-      document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
-      document.getElementById('quickstart-password-reset').addEventListener('click', sendPasswordReset, false);
+
+
     }
 
     window.onload = function() {
@@ -346,52 +313,26 @@ limitations under the License.
           <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="email" name="email" placeholder="Email"/>
           &nbsp;&nbsp;&nbsp;
           <br><br/>
-          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="username0" name="Username (enter to create new user)" placeholder="Username"/>
-          &nbsp;&nbsp;&nbsp;
-          <br><br/>
 
-          <select id="council0" name="Councils">
-             <option value="UNHRC">United Nations Human Rights Council</option>
-             <option value="UNEP">United Nations Environmental Protection</option>
-             <option value="WW2">World War II / Historical Crisis Council</option>
-             <option value="LOK">Lok Sabha</option>
-             <option value="USS">US Senate</option>
-             <option value="SOCHUM">Social, Humanitarian, and Cultural Committee</option>
-             <option value="WHO">World Health Organization</option>
-             <option value="EU">European Union</option>
-             <option value="IP">Internation Press</option>
-             <option value="OC">Admin / Organizing Committee</option>
-            </select>
-          <br><br/>
 
-          <!--input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="council0" name="Council" placeholder="Council"/>
-          &nbsp;&nbsp;&nbsp;
-          <br><br/-->
-          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="number"
-          id="grade" name="Grade" placeholder="Enter Grade in Digits"/>
-          &nbsp;&nbsp;&nbsp;
-          <br><br/>
-          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text"
-          id="sec" name="Grade" placeholder="Enter Section"/>
-          &nbsp;&nbsp;&nbsp;
-          <br><br/>
+
           <input class="mdl-textfield__input" style="display:inline;width:auto;" type="password"
           id="password" name="password" placeholder="Password"/>
 
           <br/><br/>
+
+          <input id="titleItem" rows="1" cols="50" placeholder="Enter Title of News Item here">
+          </input>
+          <br></br>
+          <input id="byItem" rows="1" cols="50" placeholder="Enter Author's name"></input>
+          <br></br>
+          <textarea id="newsItem" rows="4" cols="50" placeholder="Enter News item here">
+          </textarea>
+          <br></br>
+
           <button disabled class="mdl-button mdl-js-button mdl-button--raised"
-          id="quickstart-sign-in" name="signin">Sign In</button>
-          &nbsp;&nbsp;&nbsp;
-          <button class="mdl-button mdl-js-button mdl-button--raised"
-          id="quickstart-sign-up" name="signup">Sign Up</button>
-          &nbsp;&nbsp;&nbsp;
-          <button
-          class="mdl-button mdl-js-button mdl-button--raised" disabled
-          id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
-          &nbsp;&nbsp;&nbsp;
-          <button class="mdl-button mdl-js-button mdl-button--raised"
-          id="quickstart-password-reset"
-          name="verify-email">Send Password Reset Email</button>
+          id="quickstart-sign-in" name="signin">Submit</button>
+
 
           <!-- Container where we'll display the user details -->
           <div class="quickstart-user-details-container">
@@ -399,13 +340,7 @@ limitations under the License.
             <!--div>NewMUN Auth <code>currentUser</code> object value:</div-->
             <pre><code id="quickstart-account-details">null</code></pre>
             <pre><code id="ss-msg">new</code></pre>
-            <h1 id="welc"><b>Welcome </b></h1>
-            <p> Please verify your details. If errors are found in the information, please Contact Srevin Saju <a href="mailto:srevin03@gmail.com"> on mail </a></p>
-            <p id="suse">Not Signed In </p>
-            <p id="suid">Unique identification Number</p>
-            <p id="sgra"></p>
-            <p id="scou">Council : </p>
-            <p id="sIssues">Issues: </p>
+
           </div>
         </div>
       </div>
