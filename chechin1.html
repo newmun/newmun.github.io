@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2016 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-in</title>
+
+  <!-- Material Design Theming -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+  <link rel="stylesheet" href="main.css">
+
+  <!-- These scripts are made available when the app is served or deployed on NewMUN Hosting -->
+  <!-- If you do not serve/host your project using NewMUN Hosting see https://firebase.google.com/docs/web/setup -->
+  <!-- script src="/__/firebase/6.5.0/firebas
+  <script src="/__/firebase/6.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script-->
+  <script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/init.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.1.0/firebase-database.js"></script>
+
+  <script type="text/javascript">
+      var config = {
+        apiKey: "AIzaSyAP6ZgvRsErDr3prF8InGq0c-qr5Y4RQYc",
+        authDomain: "newmunlive.firebaseapp.com",
+        databaseURL: "https://newmunlive.firebaseio.com",
+        projectId: "newmunlive",
+        storageBucket: "",
+        messagingSenderId: "674061236225",
+        appId: "1:674061236225:web:c0d7c445791bdccf67e800"
+
+      };
+
+      firebase.initializeApp(config);
+  </script>
+
+  <script type="text/javascript">
+
+    /**
+     * Handles the sign in button press.
+     */
+    function toggleSignIn() {
+      if (firebase.auth().currentUser) {
+        // [START signout]
+        firebase.auth().signOut();
+        // document.getElementById("grade").style.display = "block";
+        //document.getElementById("sec").style.display = "block";
+        //document.getElementById("password").style.display = "block";
+
+        // document.getElementById("verify-email").style.display = "block";
+        //document.getElementById("email").style.display = "block";
+        //document.getElementById("username0").style.display = "block";
+
+        // [END signout]
+      } else {
+        // document.getElementById("grade").style.display = "none";
+        // document.getElementById("sec").style.display = "none";
+        // document.getElementById("password").style.display = "none";
+        //
+        // document.getElementById("verify-email").style.display = "none";
+        // document.getElementById("email").style.display = "none";
+        // document.getElementById("username0").style.display = "none";
+
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        if (email.length < 4) {
+          alert('Please enter an email address.');
+          return;
+        }
+        if (password.length < 4) {
+          alert('Please enter a password.');
+          return;
+        }
+        // Sign in with email and pass.
+        // [START authwithemail]
+        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // [START_EXCLUDE]
+          if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+          } else {
+            alert(errorMessage);
+          }
+          console.log(error);
+          document.getElementById('quickstart-sign-in').disabled = false;
+          // [END_EXCLUDE]
+        });
+
+        // [END authwithemail]
+      }
+      document.getElementById('quickstart-sign-in').disabled = true;
+    }
+
+    /**
+     * Handles the sign up button press.
+     */
+    function handleSignUp() {
+
+      var sixthseventh = ["SOCHUM", "WHO", "UNEP"]
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
+      var usrname =  document.getElementById('username0').value;
+      var cncil = document.getElementById('council0').value;
+
+
+
+      // if (grade > 12 || grade < 6){
+      //   alert("You provided a grade that is out of range. Please give between 6 - 12");
+      //   return;
+      // }
+      // if (grade == 6 || grade == 7){
+      //   if (!sixthseventh.includes(cncil)){
+      //     alert("Sorry, the councils chosen is reserved for Grade 8 to Grade 12");
+      //     return;
+      //   }
+      //
+      // }
+      // if (grade>= 8){
+      //   if (sixthseventh.includes(cncil)){
+      //     alert("Sorry, the councils chosen is reserved for Grade 6 and Grade 7");
+      //     return;
+      //   }
+      // }
+      if (email.length < 4) {
+        alert('Please enter an email address.');
+        return;
+      }
+      if (password.length < 4) {
+        alert('Please enter a password.');
+        return;
+      }
+      // Sign in with email and pass.
+      // [START createwithemail]
+      var timesta = firebase.firestore.Timstamp.fromDate(new Date());
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(function(response){
+        console.log(firebase.auth().currentUser.uid)
+
+
+        firebase.database().ref('users/' + firebase.auth().currentUser.uid).set({
+          uid: firebase.auth().currentUser.uid,
+          fullname: usrname.toString(),
+          council: cncil.toString(),
+          email: email,
+          checkin11: timesta,
+        });
+        document.getElementById('ss-msg').textContent = "Checkin Completed Succesfully";
+
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode == 'auth/weak-password') {
+          alert('The password is too weak.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+        // [END_EXCLUDE]
+      });
+      document.getElementById('ss-msg').textContent = "RUNNING";
+
+      document.getElementById('ss-msg').textContent = "RUNNING2";
+
+      console.log("SUCCESS DATABASE IN");
+
+
+      console.log("SUCCESS DATABASE OUT");
+
+      // [END createwithemail]
+    }
+
+    /**
+     * Sends an email verification to the user.
+     */
+    function sendEmailVerification() {
+      // [START sendemailverification]
+      firebase.auth().currentUser.sendEmailVerification().then(function() {
+        // Email Verification sent!
+        // [START_EXCLUDE]
+        alert('Email Verification Sent!');
+        document.getElementById('ss-msg').textContent = "SUCCESS";
+        // [END_EXCLUDE]
+      });
+      // [END sendemailverification]
+    }
+
+    function sendPasswordReset() {
+      var email = document.getElementById('email').value;
+      // [START sendpasswordemail]
+      firebase.auth().sendPasswordResetEmail(email).then(function() {
+        // Password Reset Email Sent!
+        // [START_EXCLUDE]
+        alert('Password Reset Email Sent!');
+        // [END_EXCLUDE]
+      }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode == 'auth/invalid-email') {
+          alert(errorMessage);
+        } else if (errorCode == 'auth/user-not-found') {
+          alert(errorMessage);
+        }
+        console.log(error);
+        // [END_EXCLUDE]
+      });
+      // [END sendpasswordemail];
+    }
+
+    /**
+     * initApp handles setting up UI event listeners and registering NewMUN auth listeners:
+     *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
+     *    out, and that is where we update the UI.
+     */
+    function initApp() {
+      // Listening for auth state changes.
+      // [START authstatelistener]
+      firebase.auth().onAuthStateChanged(function(user) {
+        // [START_EXCLUDE silent]
+        document.getElementById('quickstart-verify-email').disabled = true;
+        // [END_EXCLUDE]
+        if (user) {
+          // User is signed in.
+          var displayName = user.fullname;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var isAnonymous = user.isAnonymous;
+          var uid = user.uid;
+          var providerData = user.providerData;
+
+          // var rootRef = firebase.database().ref();
+
+          var userz = "";
+
+          var ref = firebase.database().ref("/users/"+ uid.toString());
+          ref.once("value")
+            .then(function(snapshot) {
+              var firstName = snapshot.child("fullname").val();
+              var uidDat = snapshot.child("uid").val();
+              var councilDat = snapshot.child("council").val();
+              var sectionDat = snapshot.child("section").val();
+              var gradeDat = snapshot.child("grade").val();
+              document.getElementById('welc').textContent = "Welcome "+ firstName.toString();
+              document.getElementById('suid').textContent = "Unique ID : "+ uidDat.toString();
+              document.getElementById('scou').textContent = "Council : <b>"+ councilDat.toString() + "</b>";
+            });
+          // var ref = firebase.database().ref('/users/' + uid +"/fullname");
+          // document.getElementById('welc').textContent = "Welcome "+userz;
+
+          document.getElementById('suse').textContent = '';
+          // [START_EXCLUDE]
+          // document.getElementById("grade").style.display = "none";
+          // document.getElementById("sec").style.display = "none";
+          // document.getElementById("password").style.display = "none";
+          //
+          // document.getElementById("verify-email").style.display = "none";
+          // document.getElementById("email").style.display = "none";
+          // document.getElementById("username0").style.display = "none";
+
+          document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+          document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+          document.getElementById('quickstart-account-details').textContent ="Your unique identification code: "+uid;
+          if (!emailVerified) {
+            document.getElementById('quickstart-verify-email').disabled = false;
+          }
+
+          // [END_EXCLUDE]
+        } else {
+          // User is signed out.
+          // [START_EXCLUDE]
+          document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+          document.getElementById('quickstart-account-details').textContent = 'null';
+          // [END_EXCLUDE]
+        }
+        // [START_EXCLUDE silent]
+        document.getElementById('quickstart-sign-in').disabled = false;
+        // [END_EXCLUDE]
+      });
+      // [END authstatelistener]
+
+      document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+      document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUp, false);
+      document.getElementById('quickstart-verify-email').addEventListener('click', sendEmailVerification, false);
+      document.getElementById('quickstart-password-reset').addEventListener('click', sendPasswordReset, false);
+    }
+
+    window.onload = function() {
+      initApp();
+    };
+  </script>
+</head>
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+  <!-- Header section containing title -->
+  <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+      <div class="mdl-layout__header-row mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--8-col-desktop">
+        <img src="img/g11385.png" height=100%>
+        <a><h3 style='color: white; font-family: "Open Sans", sans-serif;' >  Authentication</h3></a>
+      </div>
+
+
+    </div>
+  </header>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
+
+      <!-- Container for the demo -->
+      <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+        <div class="mdl-card__title mdl-color--light-blue-600 mdl-color-text--white">
+          <h2 class="mdl-card__title-text">NewMUN Email &amp; Password Authentication</h2>
+        </div>
+        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
+          <p>Enter the following details to checkin to the island's greates conference!</p>
+
+          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="email" name="email" placeholder="Email"/>
+          &nbsp;&nbsp;&nbsp;
+          <br><br/>
+          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="username0" name="Username (enter to create new user)" placeholder="Username"/>
+          &nbsp;&nbsp;&nbsp;
+          <br><br/>
+
+          <select id="council0" name="Councils">
+             <option value="UNHRC">United Nations Human Rights Council</option>
+             <option value="UNEP">United Nations Environmental Protection</option>
+             <option value="WW2">World War II / Historical Crisis Council</option>
+             <option value="LOK">Lok Sabha</option>
+             <option value="USS">US Senate</option>
+             <option value="SOCHUM">Social, Humanitarian, and Cultural Committee</option>
+             <option value="WHO">World Health Organization</option>
+             <option value="EU">European Union</option>
+             <option value="IP">Internation Press</option>
+             <option value="OC">Admin / Organizing Committee</option>
+            </select>
+          <br><br/>
+
+          <!--input class="mdl-textfield__input" style="display:inline;width:auto;" type="text" id="council0" name="Council" placeholder="Council"/>
+          &nbsp;&nbsp;&nbsp;
+          <br><br/-->
+          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="number"
+          id="grade" name="Grade" placeholder="Enter Grade in Digits"/>
+          &nbsp;&nbsp;&nbsp;
+          <br><br/>
+          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="text"
+          id="sec" name="Grade" placeholder="Enter Section"/>
+          &nbsp;&nbsp;&nbsp;
+          <br><br/>
+          <input class="mdl-textfield__input" style="display:inline;width:auto;" type="password"
+          id="password" name="password" placeholder="Password"/>
+
+          <br/><br/>
+          <button disabled class="mdl-button mdl-js-button mdl-button--raised"
+          id="quickstart-sign-in" name="signin">Sign In</button>
+          &nbsp;&nbsp;&nbsp;
+          <button class="mdl-button mdl-js-button mdl-button--raised"
+          id="quickstart-sign-up" name="signup">Sign Up</button>
+          &nbsp;&nbsp;&nbsp;
+          <button
+          class="mdl-button mdl-js-button mdl-button--raised" disabled
+          id="quickstart-verify-email" name="verify-email">Send Email Verification</button>
+          &nbsp;&nbsp;&nbsp;
+          <button class="mdl-button mdl-js-button mdl-button--raised"
+          id="quickstart-password-reset"
+          name="verify-email">Send Password Reset Email</button>
+
+          <!-- Container where we'll display the user details -->
+          <div class="quickstart-user-details-container">
+            Sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
+            <!--div>NewMUN Auth <code>currentUser</code> object value:</div-->
+            <pre><code id="quickstart-account-details">null</code></pre>
+            <pre><code id="ss-msg">new</code></pre>
+            <h1 id="welc"><b>Welcome </b></h1>
+            <p> Please verify your details. If errors are found in the information, please Contact Srevin Saju <a href="mailto:srevin03@gmail.com"> on mail </a></p>
+            <p id="suse">Not Signed In </p>
+            <p id="suid">Unique identification Number</p>
+
+            <p id="scou">Council : </p>
+            <p id="sIssues">Issues: </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>
